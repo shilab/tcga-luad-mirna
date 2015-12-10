@@ -10,18 +10,26 @@ code/rename.py:
 	wget -P ./code -nd --no-check-certificate https://raw.githubusercontent.com/shilab/tcga_tools/8ad6911e137597ecdfec2d40b75b5b7546d4a4cb/rename.py
 
 code/ExpressionMatrix.py:
-	wget -P ./code -nd --no-check-certificate https://raw.githubusercontent.com/shilab/tcga_tools/8ad6911e137597ecdfec2d40b75b5b7546d4a4cb/ExpressionMatrix.py
+	wget -P ./code -nd --no-check-certificate https://raw.githubusercontent.com/shilab/tcga_tools/3332172e35db2d3d11f4efe2f5d64891d8ae1e4d/ExpressionMatrix.py
 
 code/miRMatrix.py:
 	wget -P ./code -nd --no-check-certificate https://raw.githubusercontent.com/shilab/tcga_tools/8ad6911e137597ecdfec2d40b75b5b7546d4a4cb/miRMatrix.py
 
-Data: data/Clinical data/RNASeq/rename data/miRNASeq data/RNAMatrix data/miRNAMatrix
+code/overlap.py:
+	wget -P ./code -nd --no-check-certificate https://raw.githubusercontent.com/shilab/sample_overlap/b81f45376d05b6b3b32c2ab5c9d71302cb906920/overlap/overlap.py
+
+Data: data/Clinical data/RNASeq/rename data/miRNASeq data/miRNAMatrix.out data/RNAMatrix.out
 
 data/RNAMatrix: data/RNASeq/rename code/ExpressionMatrix.py
 	python code/ExpressionMatrix.py 'data/RNASeq/rename/*' > data/RNAMatrix
 
 data/miRNAMatrix: data/miRNASeq code/miRMatrix.py
 	python code/miRMatrix.py 'data/miRNASeq/miRNAHiSeq/*mirna.quantification.txt' > data/miRNAMatrix
+
+data/miRNAMatrix.out: data/miRNAMatrix data/RNAMatrix code/overlap.py
+	python code/overlap.py data/miRNAMatrix data/RNAMatrix
+
+data/RNAMatrix.out: data/miRNAMatrix.out
 
 data/Clinical:
 	mkdir -p data/Clinical
